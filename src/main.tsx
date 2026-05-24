@@ -7,7 +7,7 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/thesis-assistant">
       <App />
       <Toaster position="top-right" richColors closeButton />
     </BrowserRouter>
