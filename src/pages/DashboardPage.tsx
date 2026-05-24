@@ -179,27 +179,27 @@ export default function DashboardPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="line-clamp-2 text-lg">{paper.title}</CardTitle>
-                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="flex gap-1 md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
                     <button
                       type="button"
-                      className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                      className="rounded-lg p-2.5 min-h-[44px] min-w-[44px] text-slate-500 hover:bg-slate-100 active:bg-slate-200"
                       onClick={(e) => {
                         e.stopPropagation();
                         setRenamingPaper(paper);
                         setRenameTitle(paper.title);
                       }}
                     >
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Pencil className="h-5 w-5" />
                     </button>
                     <button
                       type="button"
-                      className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                      className="rounded-lg p-2.5 min-h-[44px] min-w-[44px] text-red-400 hover:bg-red-50 active:bg-red-100"
                       onClick={(e) => {
                         e.stopPropagation();
                         setDeletingPaper(paper);
                       }}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </div>
                 </div>

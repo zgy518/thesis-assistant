@@ -5,7 +5,6 @@ import type { Paper, Chapter } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AIPanel from "@/components/features/AIPanel";
-import VoiceInput from "@/components/features/VoiceInput";
 import { exportToWord, exportToPDF } from "@/services/export";
 import { useSettings } from "@/hooks/useSettings";
 import { toast } from "sonner";
@@ -203,18 +202,23 @@ export default function WritingPage() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] -mx-4">
-      {/* Mobile navigation bar */}
-      <div className="flex w-full items-center gap-2 border-b bg-background px-2 py-1.5 lg:hidden">
-        <Button variant="outline" size="sm" onClick={() => setMobilePanel("chapters")}>
-          <Menu className="mr-1 h-3.5 w-3.5" />章节
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => setMobilePanel("editor")}>
-          <FileText className="mr-1 h-3.5 w-3.5" />编辑
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => setMobilePanel("ai")}>
-          <Sparkles className="mr-1 h-3.5 w-3.5" />AI
-        </Button>
-        <span className="flex-1 text-xs text-muted-foreground truncate">{activeChapter?.title}</span>
+      {/* Mobile toolbar — sticky */}
+      <div className="sticky top-0 z-30 flex w-full flex-col border-b bg-background lg:hidden">
+        <div className="flex items-center gap-2 px-2 py-1">
+          <span className="flex-1 truncate text-xs font-medium">{activeChapter?.title || ""}</span>
+          <span className="text-xs text-muted-foreground">{wordCount.toLocaleString()}词</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-1 px-1 pb-1">
+          <Button variant="outline" size="sm" onClick={() => setMobilePanel("chapters")}><Menu className="h-3 w-3"/>章节</Button>
+          <Button variant="outline" size="sm" onClick={() => setMobilePanel("ai")}><Sparkles className="h-3 w-3"/>AI</Button>
+          <Button variant="outline" size="sm" disabled={saveStatus!=="unsaved"} onClick={() => save(editorContent)}><Save className="h-3 w-3"/>保存</Button>
+          <Button variant={previewMode?"default":"outline"} size="sm" onClick={() => setPreviewMode(!previewMode)}>{previewMode?"编辑":"预览"}</Button>
+          <Button variant="outline" size="sm" onClick={()=>handleExport("word")}>Word</Button>
+          <Button variant="outline" size="sm" onClick={()=>handleExport("pdf")}>PDF</Button>
+          <Button variant="ghost" size="sm" onClick={()=>navigate("/paper/"+paperId+"/references")}>文献</Button>
+          <Button variant="ghost" size="sm" onClick={()=>navigate("/paper/"+paperId+"/terms")}>术语</Button>
+          <Button variant="ghost" size="sm" onClick={async()=>{await loadSnapshots();setShowSnapshots(true)}}>快照</Button>
+        </div>
       </div>
 
       {/* Mobile panel overlays */}
@@ -333,9 +337,7 @@ export default function WritingPage() {
             <Button variant="outline" size="sm" disabled={saveStatus !== "unsaved"} onClick={() => save(editorContent)}>
               <Save className="mr-1 h-3.5 w-3.5" />保存
             </Button>
-            <VoiceInput onText={(text) => { setEditorContent(text); setSaveStatus("unsaved"); if (saveTimerRef.current) clearTimeout(saveTimerRef.current); saveTimerRef.current = setTimeout(() => save(text), 2000); }} targetRef={editorRef} />
             <Button variant={previewMode?"default":"outline"} size="sm" onClick={() => setPreviewMode(!previewMode)}>
-              {previewMode ? <Edit3 className="mr-1 h-3.5 w-3.5" /> : <Eye className="mr-1 h-3.5 w-3.5" />}
               {previewMode ? "编辑" : "预览"}
             </Button>
             <Button variant="outline" size="sm" onClick={() => handleExport("word")}>Word</Button>
@@ -443,7 +445,6 @@ export default function WritingPage() {
         </div>
       </section>
 
-      {/* RIGHT: AI Panel */}
       {/* RIGHT: AI Panel */}
       {showAI ? (
         <aside className="flex w-72 flex-shrink-0 flex-col border-l bg-card">

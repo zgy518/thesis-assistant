@@ -200,8 +200,8 @@ export default function TopicOutlinePage() {
       }
       await db.updatePaper(paper.id, { status: "writing" });
       navigate(`/paper/${paper.id}/write`);
-    } catch {
-      // ignore
+    } catch (e) {
+      console.error(e);
     } finally {
       setSaving(false);
     }
@@ -444,7 +444,7 @@ export default function TopicOutlinePage() {
       {/* Step 2: Topic Selection */}
       {step === "topics" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-semibold text-slate-800">
               共 {topics.length} 个选题建议
             </h2>
@@ -499,22 +499,21 @@ export default function TopicOutlinePage() {
       {/* Step 3: Outline Editor */}
       {step === "outline" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-800">论文大纲</h2>
-              <p className="text-sm text-slate-500">
-                拖拽调整章节顺序，点击"添加章节"增补内容
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("topics")}>
-                返回选题
-              </Button>
-              <Button onClick={addTopLevel} variant="outline" size="sm">
-                <Plus className="mr-1 h-4 w-4" />
-                添加章节
-              </Button>
-              <Button onClick={handleSaveOutline} disabled={saving}>
+          {/* Toolbar: Row 1 = title+desc, Row 2 = 3 buttons equal */}
+          <div>
+            <h2 className="text-lg font-semibold text-slate-800">论文大纲</h2>
+            <p className="text-sm text-slate-500 mb-2">
+              拖拽调整章节顺序，点击"添加章节"增补内容
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <Button variant="outline" size="sm" className="w-full" onClick={() => setStep("topics")}>
+              返回选题
+            </Button>
+            <Button onClick={addTopLevel} variant="outline" size="sm" className="w-full">
+              <Plus className="mr-1 h-4 w-4" />添加章节
+            </Button>
+            <Button onClick={handleSaveOutline} disabled={saving} size="sm" className="w-full">
                 {saving ? (
                   <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                 ) : (
@@ -523,7 +522,6 @@ export default function TopicOutlinePage() {
                 保存并开始写作
               </Button>
             </div>
-          </div>
 
           {/* Outline tree */}
           <div className="space-y-2">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { writeSection, polishTextStream, rewriteTextStream, translateTextStream, checkGrammar, checkVariety, checkCoherence, checkArgumentChain, synthesizeLiterature, paperHealthCheck, extractTerms, AiApiError } from "@/services/ai";
+import { stripMarkdown } from "@/lib/utils";
 import { db } from "@/services/db";
 import { toast } from "sonner";
 import type { AiOperationType, PolishMode, RewriteMode, TranslateDirection, Term, GrammarIssue } from "@/types";
@@ -353,7 +354,7 @@ export default function AIPanel({
                 {writeLoading ? "正在生成..." : "AI 撰写"}
               </Button>
 
-              {writeResult && <ResultCard text={writeResult} onReplace={onReplace} />}
+              {writeResult && <ResultCard text={writeResult} onReplace={(t) => onReplace(stripMarkdown(t))} />}
 
               {/* ── Literature Synthesis ── */}
               <div className="border-t pt-3">
@@ -430,7 +431,7 @@ export default function AIPanel({
                 </p>
               )}
 
-              {polishResult && <ResultCard text={polishResult} onReplace={onReplace} />}
+              {polishResult && <ResultCard text={polishResult} onReplace={(t) => onReplace(stripMarkdown(t))} />}
             </TabsContent>
 
             {/* ===== Rewrite Tab ===== */}
@@ -467,7 +468,7 @@ export default function AIPanel({
                 </span>
               </Button>
 
-              {rewriteResult && <ResultCard text={rewriteResult} onReplace={onReplace} />}
+              {rewriteResult && <ResultCard text={rewriteResult} onReplace={(t) => onReplace(stripMarkdown(t))} />}
             </TabsContent>
 
             {/* ===== Translate Tab ===== */}
@@ -512,7 +513,7 @@ export default function AIPanel({
                 {translateLoading ? "正在翻译..." : `翻译 (${translateDir === "zh2en" ? "中→英" : "英→中"})`}
               </Button>
 
-              {translateResult && <ResultCard text={translateResult} onReplace={onReplace} />}
+              {translateResult && <ResultCard text={translateResult} onReplace={(t) => onReplace(stripMarkdown(t))} />}
             </TabsContent>
 
             {/* ===== Grammar Check Tab ===== */}
