@@ -188,23 +188,17 @@ export default function TopicOutlinePage() {
     if (!paper) return;
     setSaving(true);
     try {
-      // Delete existing chapters for this paper
       const existing = await db.getChaptersByPaper(paper.id);
-      for (const ch of existing) {
-        await db.deleteChapter(ch.id);
-      }
-      // Create new chapters from outline
+      for (const ch of existing) { await db.deleteChapter(ch.id); }
       const chapters = flattenOutline(outline, paper.id);
-      for (const ch of chapters) {
-        await db.createChapter(ch);
-      }
+      for (const ch of chapters) { await db.createChapter(ch); }
       await db.updatePaper(paper.id, { status: "writing" });
-      navigate(`/paper/${paper.id}/write`);
     } catch (e) {
-      console.error(e);
+      console.error("Save outline error:", e);
     } finally {
       setSaving(false);
     }
+    navigate(`/paper/${paper.id}/write`);
   };
 
   // ===== Render =====
