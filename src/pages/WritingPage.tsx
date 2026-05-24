@@ -202,23 +202,18 @@ export default function WritingPage() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] -mx-4">
-      {/* Mobile toolbar — sticky */}
-      <div className="sticky top-0 z-30 flex w-full flex-col border-b bg-background lg:hidden">
-        <div className="flex items-center gap-2 px-2 py-1">
-          <span className="flex-1 truncate text-xs font-medium">{activeChapter?.title || ""}</span>
-          <span className="text-xs text-muted-foreground">{wordCount.toLocaleString()}词</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-1 px-1 pb-1">
-          <Button variant="outline" size="sm" onClick={() => setMobilePanel("chapters")}><Menu className="h-3 w-3"/>章节</Button>
-          <Button variant="outline" size="sm" onClick={() => setMobilePanel("ai")}><Sparkles className="h-3 w-3"/>AI助手</Button>
-          <Button variant="outline" size="sm" disabled={saveStatus!=="unsaved"} onClick={() => save(editorContent)}><Save className="h-3 w-3"/>保存</Button>
-          <Button variant={previewMode?"default":"outline"} size="sm" onClick={() => setPreviewMode(!previewMode)}>{previewMode?"编辑":"预览"}</Button>
-          <Button variant="outline" size="sm" onClick={()=>handleExport("word")}>Word</Button>
-          <Button variant="outline" size="sm" onClick={()=>handleExport("pdf")}>PDF</Button>
-          <Button variant="ghost" size="sm" onClick={()=>navigate("/paper/"+paperId+"/references")}>文献</Button>
-          <Button variant="ghost" size="sm" onClick={()=>navigate("/paper/"+paperId+"/terms")}>术语</Button>
-          <Button variant="ghost" size="sm" onClick={async()=>{await loadSnapshots();setShowSnapshots(true)}}>快照</Button>
-        </div>
+      {/* Mobile navigation bar */}
+      <div className="flex w-full items-center gap-2 border-b bg-background px-2 py-1.5 lg:hidden">
+        <Button variant="outline" size="sm" onClick={() => setMobilePanel("chapters")}>
+          <Menu className="mr-1 h-3.5 w-3.5" />章节
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => setMobilePanel("editor")}>
+          <FileText className="mr-1 h-3.5 w-3.5" />编辑
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => setMobilePanel("ai")}>
+          <Sparkles className="mr-1 h-3.5 w-3.5" />AI
+        </Button>
+        <span className="flex-1 text-xs text-muted-foreground truncate">{activeChapter?.title}</span>
       </div>
 
       {/* Mobile panel overlays */}
@@ -242,17 +237,15 @@ export default function WritingPage() {
         </div>
       )}
       {mobilePanel === "ai" && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setMobilePanel(null)} />
-          <div className="absolute right-0 top-0 h-full w-[85vw] max-w-[360px] bg-background shadow-lg">
-            <div className="flex items-center justify-between border-b px-3 py-2">
-              <span className="text-sm font-medium">AI 助手</span>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setMobilePanel(null)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="h-[calc(100vh-48px)]">
-              <AIPanel
+        <div className="fixed inset-0 z-40 bg-background lg:hidden">
+          <div className="flex items-center justify-between border-b px-3 py-2">
+            <span className="text-sm font-medium">AI 助手</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setMobilePanel(null)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="h-[calc(100vh-48px)]">
+            <AIPanel
               chapterTitle={activeChapter?.title ?? ""}
               editorContent={editorContent}
               paperId={paperId!}
@@ -340,6 +333,7 @@ export default function WritingPage() {
               <Save className="mr-1 h-3.5 w-3.5" />保存
             </Button>
             <Button variant={previewMode?"default":"outline"} size="sm" onClick={() => setPreviewMode(!previewMode)}>
+              {previewMode ? <Edit3 className="mr-1 h-3.5 w-3.5" /> : <Eye className="mr-1 h-3.5 w-3.5" />}
               {previewMode ? "编辑" : "预览"}
             </Button>
             <Button variant="outline" size="sm" onClick={() => handleExport("word")}>Word</Button>
@@ -447,6 +441,7 @@ export default function WritingPage() {
         </div>
       </section>
 
+      {/* RIGHT: AI Panel */}
       {/* RIGHT: AI Panel */}
       {showAI ? (
         <aside className="flex w-72 flex-shrink-0 flex-col border-l bg-card">
